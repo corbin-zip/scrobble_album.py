@@ -88,7 +88,10 @@ def scrobble_album(artist, album, time_str=None):
                 timestamp=scrobble_times[i]
             )
 
+
 if __name__ == "__main__":
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print("Usage: python scrobble_album.py 'Artist Name' 'Album Name' [Time]")
         sys.exit(1)
 
     artist_name = sys.argv[1]
