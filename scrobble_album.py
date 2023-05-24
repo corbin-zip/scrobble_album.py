@@ -48,6 +48,14 @@ else:
     with open(SESSION_KEY_FILE, 'r') as file:
         SESSION_KEY = file.read().strip()
 
+
+def search_albums(artist):
+    lastfm_network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET, session_key=SESSION_KEY)
+    artist_obj = lastfm_network.get_artist(artist)
+    albums = artist_obj.get_top_albums(limit=10)
+    for album in albums:
+        print(album.item.get_name())
+
 def scrobble_album(artist, album, time_str=None):
     lastfm_network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET, session_key=SESSION_KEY)
     album_info = lastfm_network.get_album(artist, album)
@@ -90,11 +98,26 @@ def scrobble_album(artist, album, time_str=None):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3 or len(sys.argv) > 4:
-        print("Usage: python scrobble_album.py 'Artist Name' 'Album Name' [Time]")
+    if len(sys.argv) < 2 or len(sys.argv) > 4:
+        print("Usage: python scrobble_album.py 'Artist Name' [Album Name] [Time]")
         sys.exit(1)
 
     artist_name = sys.argv[1]
-    album_name = sys.argv[2]
-    time_str = sys.argv[3] if len(sys.argv) == 4 else None
-    scrobble_album(artist_name, album_name, time_str)
+
+    # Check if album name is supplied
+    if len(sys.argv) > 2:
+        album_name = sys.argv[2]
+    else:
+        album_name = None
+
+    # Check if time_str is supplied
+    if len(sys.argv) == 4:
+        time_str = sys.argv[3]
+    else:
+        time_str = None
+
+    # If album name is not provided, search albums instead of scrobbling
+    if album_name is None:
+        search_albums(artist_name)
+    else:
+        scrobble_album(artist_name, album_name, time_str)
