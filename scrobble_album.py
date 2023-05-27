@@ -48,17 +48,17 @@ else:
     with open(SESSION_KEY_FILE, 'r') as file:
         SESSION_KEY = file.read().strip()
 
+network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET, session_key=SESSION_KEY)
+
 
 def search_albums(artist):
-    lastfm_network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET, session_key=SESSION_KEY)
-    artist_obj = lastfm_network.get_artist(artist)
+    artist_obj = network.get_artist(artist)
     albums = artist_obj.get_top_albums(limit=10)
     for album in albums:
         print(album.item.get_name())
 
 def scrobble_album(artist, album, time_str=None):
-    lastfm_network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET, session_key=SESSION_KEY)
-    album_info = lastfm_network.get_album(artist, album)
+    album_info = network.get_album(artist, album)
 
     tracks = album_info.get_tracks()
 
@@ -89,7 +89,7 @@ def scrobble_album(artist, album, time_str=None):
         le_time = time.strftime("%I:%M %p", time.localtime(scrobble_times[i]))
         print(f"Track {i+1} - {track.title}: {le_time}")
         if (not DRY):
-            lastfm_network.scrobble(
+            network.scrobble(
                 artist=track.artist.name,
                 title=track.title,
                 album=album_title,
