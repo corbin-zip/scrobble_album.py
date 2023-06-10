@@ -71,7 +71,12 @@ def scrobble_album(artist, album, time_str=None):
     # Calculate the scrobble times for each track
     scrobble_times = []
     total_duration = sum(track.get_duration() for track in tracks)
-    album_title = tracks[0].get_album().title
+    #print(tracks)
+    try:
+        album_title = tracks[0].get_album().title
+    except AttributeError:
+        # trouble grabbing album title from first track; defaulting to whatever user input was
+        album_title = album
 
     for track in reversed(tracks):
         track_duration = track.get_duration()
