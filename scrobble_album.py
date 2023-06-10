@@ -10,6 +10,7 @@ API_KEY_FILE = os.path.join(CONFIG_DIR, "api_key")
 API_SECRET_FILE = os.path.join(CONFIG_DIR, "api_secret")
 SESSION_KEY_FILE = os.path.join(CONFIG_DIR, ".session_key")
 
+# Dry run, yes or no?
 DRY = False
 
 # Make sure the API_KEY and API_SECRET files exist
@@ -23,9 +24,6 @@ with open(API_KEY_FILE, 'r') as file:
 
 with open(API_SECRET_FILE, 'r') as file:
     API_SECRET = file.read().strip()
-
-# Configure the network with API_KEY and API_SECRET
-network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
 
 # Check if the session key file exists, if not generate and save session key
 if not os.path.exists(SESSION_KEY_FILE):
