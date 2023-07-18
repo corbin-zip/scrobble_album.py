@@ -48,12 +48,43 @@ else:
 
 network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET, session_key=SESSION_KEY)
 
-
 def search_albums(artist):
     artist_obj = network.get_artist(artist)
     albums = artist_obj.get_top_albums(limit=10)
-    for album in albums:
-        print(album.item.get_name())
+    n_albums = len(albums)
+
+    # print albums in reverse order (most popular at the bottom)
+    for index, album in enumerate(reversed(albums), 1):
+        try:
+            track_count = len(album.item.get_tracks())
+            album_name = album.item.get_name()
+            print(f'#{n_albums-index+1}: {album_name} ({track_count} tracks)')
+
+        except pylast.WSError as e:
+            print(f"error while processing album at index {index}: {e}")
+            continue  # Skip to the next album
+    
+    print("#0: to do nothing & exit")
+    while True:
+        try:
+            user_input = int(input("scrobble #> "))
+            if user_input == 0:
+                print("BYE BYE")
+                break
+            elif 1 <= user_input <= (n_albums + 1):
+                # TODO: if user inputs an invalid time/pushes enter, default to current time
+                time_input = str(input("time? (format: \"6:19 PM\") > "))
+                album_selected_name = albums[user_input - 1].item.get_name()
+                print(f'attempting to scrobble "{album_selected_name}" @ {time_input}...')
+                scrobble_album(artist, album_selected_name, time_input)
+                break
+            else:
+                print("scrobble #> ")
+        except ValueError:
+            print("error: you either selected an album that is out of bounds, " \
+                    "or you did not follow the correct time format (HH:MM AM)")
+
+
 
 def scrobble_album(artist, album, time_str=None):
     album_info = network.get_album(artist, album)
@@ -77,6 +108,11 @@ def scrobble_album(artist, album, time_str=None):
     except AttributeError:
         # trouble grabbing album title from first track; defaulting to whatever user input was
         album_title = album
+    except IndexError:
+        # TODO: maybe just hide 0 track albums then? this error will
+        # still be needed for manual 'Artist' 'Album' scrobbles though
+        print("sorry! last.fm doesn't think that album has any tracks, so it can't be scrobbled")
+        exit()
 
     for track in reversed(tracks):
         track_duration = track.get_duration()
@@ -90,7 +126,7 @@ def scrobble_album(artist, album, time_str=None):
     # Scrobble each track at the corresponding scrobble time
     for i, track in enumerate(tracks):
         le_time = time.strftime("%I:%M %p", time.localtime(scrobble_times[i]))
-        print(f"Track {i+1} - {track.title}: {le_time}")
+        print(f"Track {i+1} - {track.title} @ {le_time}")
         if (not DRY):
             network.scrobble(
                 artist=track.artist.name,
