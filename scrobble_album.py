@@ -61,7 +61,7 @@ def search_albums(artist):
             print(f'#{n_albums-index+1}: {album_name} ({track_count} tracks)')
 
         except pylast.WSError as e:
-            print(f"error while processing album at index {index}: {e}")
+            print(f"#{n_albums - index + 1}: error while processing album: {e}")
             continue  # Skip to the next album
     
     print("#0: to do nothing & exit")
@@ -72,10 +72,13 @@ def search_albums(artist):
                 print("BYE BYE")
                 break
             elif 1 <= user_input <= (n_albums + 1):
-                # TODO: if user inputs an invalid time/pushes enter, default to current time
-                time_input = str(input("time? (format: \"6:19 PM\") > "))
+                # TODO: write the time in the print statement on line 81
+                # TODO: maybe do (enter for [time]) and it displays the current time
+                time_input = str(input("time? (push enter for current time) > "))
+                if (time_input == ''):
+                    time_input = None
                 album_selected_name = albums[user_input - 1].item.get_name()
-                print(f'attempting to scrobble "{album_selected_name}" @ {time_input}...')
+                print(f'attempting to scrobble "{album_selected_name}...')
                 scrobble_album(artist, album_selected_name, time_input)
                 break
             else:
@@ -91,6 +94,8 @@ def scrobble_album(artist, album, time_str=None):
 
     tracks = album_info.get_tracks()
 
+    # TODO: should allow user to write something like 5:55pm/PM etc, uppercase/lowercase
+    #       with/without the space
     now = int(time.time())
     if time_str is not None:
         # Convert the input time string to a time object
