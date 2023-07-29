@@ -72,13 +72,12 @@ def search_albums(artist):
                 print("BYE BYE")
                 break
             elif 1 <= user_input <= (n_albums + 1):
-                # TODO: write the time in the print statement on line 81
-                # TODO: maybe do (enter for [time]) and it displays the current time
-                time_input = str(input("time? (push enter for current time) > "))
+                current_time = time.strftime("%I:%M %p", time.localtime(time.time()))
+                time_input = str(input(f"time? (blank for {current_time}) > "))
                 if (time_input == ''):
-                    time_input = None
+                    time_input = current_time
                 album_selected_name = albums[user_input - 1].item.get_name()
-                print(f'attempting to scrobble "{album_selected_name}...')
+                print(f'attempting to scrobble "{album_selected_name}" @ {time_input}...')
                 scrobble_album(artist, album_selected_name, time_input)
                 break
             else:
@@ -90,6 +89,8 @@ def search_albums(artist):
 
 
 def scrobble_album(artist, album, time_str=None):
+    # TODO: general error handling -- scrobbling albums with 0 tracks,
+    #       searching for non-existant artists, etc
     album_info = network.get_album(artist, album)
 
     tracks = album_info.get_tracks()
