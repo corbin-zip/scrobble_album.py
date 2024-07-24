@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import datetime
 import sys
 import pylast
@@ -50,7 +52,7 @@ network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET, session_k
 
 def search_albums(artist):
     artist_obj = network.get_artist(artist)
-    albums = artist_obj.get_top_albums(limit=10)
+    albums = artist_obj.get_top_albums(limit=30)
     n_albums = len(albums)
 
     # print albums in reverse order (most popular at the bottom)
@@ -63,7 +65,7 @@ def search_albums(artist):
         except pylast.WSError as e:
             print(f"#{n_albums - index + 1}: error while processing album: {e}")
             continue  # Skip to the next album
-    
+
     print("#0: to do nothing & exit")
     while True:
         try:
