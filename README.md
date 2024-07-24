@@ -11,13 +11,19 @@ For scrobbling, I use `yams` with `ncmpcpp` as well as Plex's last.fm integratio
 
 Create an API key here: https://www.last.fm/api/account/create
 
-Stick the API key in a file `~/.config/pylast/api_key` and the shared secret into `~/.config/pylast/api_secret` -- there should be nothing else in these files, just the key, with no new line
+Stick the API key in a file `~/.config/pylast/api_key` and the shared secret into `~/.config/pylast/api_secret` -- there should be nothing else in these files, just the key, with no new line.
 
 For reference, you can find previous keys/secrets you've created here: https://www.last.fm/api/accounts
 
-## Usage 
+## Usage
 
 `python scrobble_album.py 'Artist Name' [Album Name] [Time]`
+
+## "Installation"
+
+Copy `scrobble_album.py` into your `$PATH`, rename to `scrobble` and `chmod +x scrobble`
+
+Or, `alias scrobble="python /path/to/scrobble_album.py`
 
 ## Arguments
 
